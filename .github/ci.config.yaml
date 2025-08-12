@@ -1,0 +1,55 @@
+# Minimal config for CI smoke test (no real API calls)
+api:
+  user: "dummy"
+  key: "dummy"
+  username: "dummy"
+  client_ip: "127.0.0.1"
+  sandbox: true
+
+scanner:
+  tlds: ["com"]
+  min_length: 2
+  max_length: 2
+  prefix: "b"
+  suffix: ""
+
+  include_letters: true
+  include_digits: false
+  include_hyphen: false
+  letters: "bc"
+  digits: "0123456789"
+
+  batch_size: 5
+  requests_per_minute: 30
+  show_premium: false
+
+  db_path: "ci_scanner.db"
+  csv_path: "ci_available_domains.csv"
+  stop_after: 10
+
+  mode: "lexicographic"
+
+  safety:
+    conservative_mode: true
+    max_requests_per_minute: 30
+    batch_size: 5
+    cooldown_every_requests: 10
+    cooldown_seconds: 1
+    random_sleep_ms_range: [0, 0]
+
+  rdap:
+    enabled: false
+
+  network:
+    preflight:
+      enabled: false
+
+  logging:
+    level: "WARNING"
+    file: "scanner-ci.log"
+    jsonl_file: "logs/batches.jsonl"
+    requests:
+      enabled: false
+    responses:
+      enabled: false
+
