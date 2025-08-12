@@ -46,7 +46,7 @@ scanner:
 
   logging:
     level: "WARNING"
-    file: "scanner-ci.log"
+    file: "logs/scanner-ci.log"
     jsonl_file: "logs/batches.jsonl"
     requests:
       enabled: false
