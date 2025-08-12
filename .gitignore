@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.venv/
+venv/
+env/
+ENV/
+dist/
+build/
+
+# Project artifacts
+logs/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.csv
+rdap_bootstrap_cache.json
+
+# Local config (contains secrets)
+config.local.yaml
+.env
+
+# Editors/OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Testing/coverage
+.pytest_cache/
+.coverage
+htmlcov/
+

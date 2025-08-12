@@ -1,0 +1,192 @@
+# Scanner configuration
+api:
+  user: "username"
+  key: "api_key"
+  username: "username"
+  client_ip: "ip"     # Public IPv4 whitelisted in Namecheap
+  sandbox: false            # true => use https://api.sandbox.namecheap.com
+
+scanner:
+  tlds: ["com"]
+  # Generation - Short modifiable names
+  min_length: 5
+  max_length: 5
+  prefix: ""             # fixed prefix for SLD
+  suffix: ""               # fixed suffix for SLD
+
+  # Alphabet options (Domain label rules allow only letters, digits, and hyphen)
+  include_letters: true
+  include_digits: false
+  include_hyphen: false
+  letters: "abcdefghijklmnopqrstuvwxyz"   # override if needed
+  digits: "0123456789"
+
+  # Order and batching
+  batch_size: 20
+  requests_per_minute: 8
+
+  # Premium handling
+  show_premium: false      # include premium domains in CSV output
+
+  # Storage
+  db_path: "ip_lex_scanner.db"
+  csv_path: "ai_available_domains.csv"
+
+  # Safety
+  stop_after: 0            # 0 = unlimited; otherwise stop after N checked domains
+
+  safety:
+    conservative_mode: true
+    max_requests_per_minute: 8
+    batch_size: 20
+    cooldown_every_requests: 3
+    cooldown_seconds: 8
+    random_sleep_ms_range: [300, 1000]
+
+  # Generation mode: 'lexicographic', 'phonetic', 'dictionary', 'brandable', 'compound', 'ai_brandable'
+  mode: "lexicographic"
+
+  # Phonetic options (used when mode='phonetic')
+  phonetic:
+    # patterns are now generated automatically based on min_length and max_length
+    # Using natural consonants ordered by frequency in real words
+    consonants: "trsnlcdgmpbk"  # ordered by frequency: t,r,s,n,l most common
+    vowels: "eaiou"  # ordered by frequency: e,a,i most common
+    any: "abcdefghijklmnopqrstuvwxyz0123456789"
+
+  # Filters - Simple brand-focused filtering
+  blacklist_substrings: ["xxx", "sex", "ass", "shit", "fuck", "damn"]  # Only block offensive content
+  blacklist_regex: []  # Let the brand-like checker handle quality
+
+
+  # Scoring (feature 2) - Realistic scoring for quality domains
+  scoring:
+    length_weight: 1.5
+    vowel_bonus: 1.0           # Balanced vowel bonus
+    no_digit_bonus: 0.8
+    no_hyphen_bonus: 0.8
+    pronounceable_bigram_bonus: 1.2  # Reasonable bonus for pronunciation
+    max_bonus: 5.0             # Realistic maximum score
+    min_score_for_alert: 3.5   # High threshold for truly good domains
+
+  # Skip rules (feature 3) - Enhanced for natural words
+  skip_rules:
+    skip_lengths: []           # e.g., [1,2]
+    max_repeat_char: 2         # reject if 'aaa' length>2 repeat (stricter)
+    no_double_hyphen: true
+
+  # RDAP fallback (feature 4)
+  rdap:
+    enabled: true
+    verify_all: false
+    verify_scope: "available"   # available | all | sample
+    verify_sample_size: 50
+    bootstrap:
+      enabled: true
+      url: "https://data.iana.org/rdap/dns.json"
+      cache_path: "rdap_bootstrap_cache.json"
+      refresh_hours: 24
+    overrides: {}  # e.g., {"ai": "https://rdap.nic.ai"}
+    requests_per_minute: 15
+    check_on_fail_count: 3
+
+  # Alerts (feature 5)
+  alerts:
+    enabled: false
+    include_premium: false
+    webhook_url: ""            # generic POST JSON: {domain, score, premium, prices}
+    telegram:
+      enabled: false
+      bot_token: ""
+      chat_id: ""
+    slack_webhook_url: ""
+
+  # Priority queue (feature 11)
+  priority_queue_path: "brand_dictionary.txt"  # Use brand dictionary as priority queue
+
+  # AI-powered generation settings
+  ai_settings:
+    enabled: true
+    intelligence_level: "high"     # low, medium, high, expert
+    word_database_size: "large"    # small, medium, large, massive
+    learning_enabled: true         # Learn from user feedback
+    market_analysis: true          # Analyze market trends
+    cultural_awareness: true       # Consider cultural appropriateness
+    phonetic_optimization: true    # Optimize for pronunciation
+    semantic_grouping: true        # Use semantic word relationships
+    brand_pattern_matching: true   # Match successful brand patterns
+    creativity_level: 0.8          # 0.0 to 1.0 (higher = more creative)
+    # Prompt-driven profile for neural generator
+    prompt_profile:
+      style: "tech"             # modern | tech | authoritative
+      keywords: ["neo", "data", "logic", "core", "pro", "smart"]
+    
+    # Generation strategies (weights)
+    strategy_weights:
+      semantic_combination: 0.30    # Combine semantically related words
+      pattern_matching: 0.25        # Follow successful brand patterns  
+      phonetic_optimization: 0.25   # Optimize for sound and pronunciation
+      morphological: 0.20           # Use linguistic morphology rules
+    
+    # Business context (helps AI understand target market)
+    business_context:
+      industry: "technology"
+      target_audience: "professionals"
+      brand_personality: ["modern", "innovative", "trustworthy", "efficient"]
+      keywords: ["tech", "app", "digital", "smart", "pro", "fast", "easy", "new"]
+      avoid_words: ["test", "demo", "temp", "old", "slow", "hard", "bad"]
+
+  # Sharding (feature 7)
+  sharding:
+    enabled: false
+    worker_id: "worker-1"
+    lease_seconds: 180
+    allowed_prefixes: []       # e.g., ["a","b","c"], empty => all
+
+  # Adaptive RPM (feature 8)
+  rpm_bounds:
+    min: 10
+    max: 55
+
+  # Dry-run & warm-up (feature 9)
+  dry_run: false
+  warmup:
+    enabled: true
+    duration_seconds: 120
+    rpm: 6
+    batch_size: 20
+
+  # Dashboard (feature 10) handled in app.py
+
+
+  # Network settings
+  network:
+    preflight:
+      enabled: true
+      ip_check_url: "https://api.ipify.org"   # returns current public IP as plain text
+      enforce_match: true                     # stop if current IP != api.client_ip
+      check_interval_seconds: 60              # re-check during run; stop if changed
+    proxies:
+      http: ""         # e.g. http://user:pass@proxy:3128
+      https: ""        # e.g. http://user:pass@proxy:3128
+    no_proxy: ""     # e.g. namecheap.com,rdap.verisign.com
+
+
+  # Logging
+  logging:
+    level: "INFO"                 # DEBUG, INFO, WARNING, ERROR
+    file: "logs/scanner.log"      # human-readable rotating log
+    jsonl_file: "logs/batches.jsonl"  # structured JSON lines (one event per line)
+    rotate_max_mb: 5
+    rotate_backups: 3
+    requests:
+      enabled: true
+      include_domains: "full"   # full | sample | none
+      sample_size: 50
+    responses:
+      enabled: true
+      include_available: true
+      log_checked_domains: true
+      include_errors: true
+      include_xml_snippet: true
+      xml_snippet_chars: 800
