@@ -1,3 +1,11 @@
+<div align="center">
+
+<img src="assets/logo.png" alt="Project Logo" width="200"/>
+
+</div>
+
+---
+
 # Namecheap Domain Scanner Pro
 
 Advanced domain availability scanner with multiple generation modes, scoring, RDAP fallback, batching, and an optional AI-based brandable name generator.
@@ -45,7 +53,7 @@ scanner:
 ```bash
 python scanner.py --config config.local.yaml
 ```
-Use `--reset-progress` to clear stored progress in the DB for the current space.
+To reset progress, delete the DB file specified by `scanner.db_path`.
 
 ## CI
 GitHub Actions workflow compiles sources and runs a very small dry-run using `.github/ci.config.yaml`.
