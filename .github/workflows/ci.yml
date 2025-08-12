@@ -32,5 +32,5 @@ jobs:
 
       - name: Smoke dry-run (short)
         run: |
-          python scanner.py --config .github/ci.config.yaml --dry-run --reset-progress
+          python scanner.py --config .github/ci.config.yaml --dry-run
 
